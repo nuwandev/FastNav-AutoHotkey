@@ -1,26 +1,34 @@
-﻿#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0
 #SingleInstance Force
 SetWorkingDir A_ScriptDir
 
-; 🚀 RAlt as Function Layer
-RAlt & w::Send("{Up}")
-RAlt & a::Send("{Left}")
-RAlt & s::Send("{Down}")
-RAlt & d::Send("{Right}")
+; 🔧 Utility: Get active modifiers
+GetMods() {
+    mods := []
+    if GetKeyState("Shift") mods.Push("+")
+    if GetKeyState("Ctrl") mods.Push("^")
+    if GetKeyState("Alt") mods.Push("!")
+    return mods.Join("")
+}
 
-RAlt & q::Send("{Home}")
-RAlt & e::Send("{End}")
+; 🎯 SmartFN logic with modifiers
+SendNav(key, arrow) {
+    Send(GetMods() "{" arrow "}")
+}
 
-RAlt & r::Send("^Left")      ; Move one word left
-RAlt & t::Send("^Right")     ; Move one word right
+RAlt & w => SendNav("w", "Up")
+RAlt & a => SendNav("a", "Left")
+RAlt & s => SendNav("s", "Down")
+RAlt & d => SendNav("d", "Right")
 
-RAlt & f::Send("{Del}")
-RAlt & Backspace::Send("{Backspace}")
+RAlt & q::Send(GetMods() "{Home}")
+RAlt & e::Send(GetMods() "{End}")
+RAlt & f::Send(GetMods() "{Del}")
+RAlt & Backspace::Send(GetMods() "{Backspace}")
+RAlt & j::Send(GetMods() "{PgUp}")
+RAlt & k::Send(GetMods() "{PgDn}")
+RAlt & u::Send(GetMods() "^z")
+RAlt & i::Send(GetMods() "^y")
+RAlt & `;::Send(GetMods() "{Esc}")
 
-RAlt & j::Send("{PgUp}")
-RAlt & k::Send("{PgDn}")
-
-RAlt & u::Send("^z")         ; Undo
-RAlt & i::Send("^y")         ; Redo
-
-RAlt & `;::Send("{Esc}")     ; Quick Escape
+^RAlt::SetCapsLockState "Toggle"
