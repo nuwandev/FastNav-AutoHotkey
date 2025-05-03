@@ -2,33 +2,65 @@
 #SingleInstance Force
 SetWorkingDir A_ScriptDir
 
-; 🔧 Utility: Get active modifiers
-GetMods() {
-    mods := []
-    if GetKeyState("Shift") mods.Push("+")
-    if GetKeyState("Ctrl") mods.Push("^")
-    if GetKeyState("Alt") mods.Push("!")
-    return mods.Join("")
+; 🚀 Disable all unwanted RAlt combinations
+RAlt::Return                                   ; Disable standalone RAlt
+RAlt & ::Return                                ; Disable all undefined RAlt combinations
+
+; 🚀 RAlt as Function Layer Modifier
+RAlt & w:: {                                   ; RAlt + W = Arrow Up
+    if GetKeyState("Shift", "P")               ; If Shift is held
+        Send("+{Up}")                          ; Select Up
+    else
+        Send("{Up}")                           ; Move Up
+}
+RAlt & a:: {                                   ; RAlt + A = Arrow Left
+    if GetKeyState("Shift", "P")               ; If Shift is held
+        Send("+{Left}")                        ; Select Left
+    else
+        Send("{Left}")                         ; Move Left
+}
+RAlt & s:: {                                   ; RAlt + S = Arrow Down
+    if GetKeyState("Shift", "P")               ; If Shift is held
+        Send("+{Down}")                        ; Select Down
+    else
+        Send("{Down}")                         ; Move Down
+}
+RAlt & d:: {                                   ; RAlt + D = Arrow Right
+    if GetKeyState("Shift", "P")               ; If Shift is held
+        Send("+{Right}")                       ; Select Right
+    else
+        Send("{Right}")                        ; Move Right
 }
 
-; 🎯 SmartFN logic with modifiers
-SendNav(key, arrow) {
-    Send(GetMods() "{" arrow "}")
+; Home/End Keys
+RAlt & q::Send("{Home}")                        ; RAlt + Q = Home
+RAlt & e::Send("{End}")                         ; RAlt + E = End
+
+; Word Navigation and Selection
+RAlt & r:: {                                   ; RAlt + R = Word Left
+    if GetKeyState("Shift", "P")               ; If Shift is held
+        Send("^+{Left}")                       ; Select Word Left
+    else
+        Send("^{Left}")                        ; Move Word Left
+}
+RAlt & t:: {                                   ; RAlt + T = Word Right
+    if GetKeyState("Shift", "P")               ; If Shift is held
+        Send("^+{Right}")                      ; Select Word Right
+    else
+        Send("^{Right}")                       ; Move Word Right
 }
 
-RAlt & w => SendNav("w", "Up")
-RAlt & a => SendNav("a", "Left")
-RAlt & s => SendNav("s", "Down")
-RAlt & d => SendNav("d", "Right")
+; Delete/Backspace
+RAlt & f::Send("{Del}")                         ; RAlt + F = Delete
+RAlt & Backspace::Send("{Backspace}")           ; RAlt + Backspace = Backspace
 
-RAlt & q::Send(GetMods() "{Home}")
-RAlt & e::Send(GetMods() "{End}")
-RAlt & f::Send(GetMods() "{Del}")
-RAlt & Backspace::Send(GetMods() "{Backspace}")
-RAlt & j::Send(GetMods() "{PgUp}")
-RAlt & k::Send(GetMods() "{PgDn}")
-RAlt & u::Send(GetMods() "^z")
-RAlt & i::Send(GetMods() "^y")
-RAlt & `;::Send(GetMods() "{Esc}")
+; Page Up/Page Down
+RAlt & j::Send("{PgUp}")                        ; RAlt + J = Page Up
+RAlt & k::Send("{PgDn}")                        ; RAlt + K = Page Down
 
-^RAlt::SetCapsLockState "Toggle"
+; Undo/Redo
+RAlt & u::Send("^z")                            ; RAlt + U = Undo (Ctrl + Z)
+RAlt & i::Send("^y")                            ; RAlt + I = Redo (Ctrl + Y)
+
+; Quick Escape
+RAlt & `;::Send("{Esc}")                        ; RAlt + ; = Escape
